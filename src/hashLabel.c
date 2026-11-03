@@ -1,4 +1,4 @@
-#include "include/global.h"
+#include "../include/global.h"
 
 typedef struct HashStrNode {
 	char string[64];

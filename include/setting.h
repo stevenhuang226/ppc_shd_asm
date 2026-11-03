@@ -1,0 +1,8 @@
+#ifndef _PSA_SETTING
+#define _PSA_SETTING
+
+#define HASH_LABEL_POOL 10008
+#define SCOPE_MAX_LEVEL 64
+#define SOURCE_ARR_DEF 1024
+
+#endif
