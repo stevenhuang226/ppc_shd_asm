@@ -3,15 +3,6 @@
 
 #include "source.h"
 
-int8_t checkIgnore(char *s)
-{
-	while (isspace((uint8_t)*s)) {
-		s++;
-	}
-
-	return (*s == '\0' || (s[0] == '/' && s[1] == '/'));
-}
-
 SourceArray *loadFiles(char **filenames, int size)
 {
 	if (sourceChunk != NULL || sourceChunkSize != 0)
@@ -39,10 +30,18 @@ SourceArray *loadFiles(char **filenames, int size)
 		int localLineCount = 0;
 
 		while (fgets(buffer, sizeof(buffer), file) != NULL) {
-			size_t len = strlen(buffer);
 			++localLineCount;
 
-			if (checkIgnore(buffer)) continue;
+			char *s = buffer;
+			while (isspace(*s)) {
+				++s;
+			}
+
+			if (s[0] == '\0' || (s[0] == '/' && s[1] == '/')) {
+				continue;
+			}
+
+			size_t len = strlen(s);
 
 			if (chunkPtr + len + 1 > sourceChunkSize) {
 				sourceChunkSize *= 2;
@@ -61,6 +60,8 @@ SourceArray *loadFiles(char **filenames, int size)
 				if (srcArr == NULL) goto cleanup;
 			}
 
+			//TODO consider remove space inside buffer
+
 			srcArr->lines[srcArr->count].filename = name;
 			srcArr->lines[srcArr->count].content =
 				sourceChunk + chunkPtr;
@@ -69,7 +70,7 @@ SourceArray *loadFiles(char **filenames, int size)
 
 			chunkPtr += 1 + snprintf(sourceChunk + chunkPtr,
 			sourceChunkSize - chunkPtr,
-			"%s", buffer);
+			"%s", s);
 
 			++srcArr->count;
 		}
