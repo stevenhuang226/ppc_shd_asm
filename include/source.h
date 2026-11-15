@@ -1,5 +1,6 @@
 #ifndef SOURCE_H
 #define SOURCE_H
+
 #include "../include/global.h"
 
 typedef struct {

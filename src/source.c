@@ -1,7 +1,7 @@
 #include "../include/global.h"
 #include "../include/setting.h"
-
-#include "source.h"
+#include "../include/utils.h"
+#include "../include/source.h"
 
 SourceArray *loadFiles(char **filenames, int size)
 {
@@ -26,6 +26,8 @@ SourceArray *loadFiles(char **filenames, int size)
 
 		FILE *file = fopen(name, "r");
 
+		if (!file) goto cleanup;
+
 		char buffer[1024];
 		int localLineCount = 0;
 
@@ -33,13 +35,9 @@ SourceArray *loadFiles(char **filenames, int size)
 			++localLineCount;
 
 			char *s = buffer;
-			while (isspace(*s)) {
-				++s;
-			}
+			while (!isPssCode(*s)) ++s;
 
-			if (s[0] == '\0' || (s[0] == '/' && s[1] == '/')) {
-				continue;
-			}
+			if (isPssEnd(*s)) continue;
 
 			size_t len = strlen(s);
 
@@ -59,8 +57,6 @@ SourceArray *loadFiles(char **filenames, int size)
 
 				if (srcArr == NULL) goto cleanup;
 			}
-
-			//TODO consider remove space inside buffer
 
 			srcArr->lines[srcArr->count].filename = name;
 			srcArr->lines[srcArr->count].content =
@@ -87,7 +83,7 @@ SourceArray *loadFiles(char **filenames, int size)
 cleanup:
 	free(srcArr);
 
-	free(sourceChunk);
+	free(sourceChunk); sourceChunk = NULL;
 	sourceChunkSize = 0;
 
 	return NULL;

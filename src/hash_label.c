@@ -1,18 +1,6 @@
 #include "../include/global.h"
 
-typedef struct HashStrNode {
-	char string[64];
-	uint32_t val;
-} HashStrNode;
-
-typedef struct HashStrMap {
-	int count;
-	int step;
-
-	size_t capacity;
-	uint32_t defVal;
-	HashStrNode data[];
-} HashStrMap;
+#include "../include/hash_label.h"
 
 HashStrMap *HashStrMapCreate(
 const size_t capacity,
@@ -77,7 +65,7 @@ const uint32_t val) {
 }
 
 uint32_t HashStrMapSearch(
-HashStrMap *map,
+const HashStrMap *map,
 const char *key) {
 	if (key == NULL)
 		return map->defVal;
