@@ -403,7 +403,7 @@ const char *parseInstruction(const char *s, Parsed *p)
 	if (len <= 1) return NULL;
 
 	size_t regc = 0;
-	while (!isPssEnd((uint8_t)*s)
+	while (!isPssEnd(*s)
 	&& regc < INSTRUCTION_REGCS) {
 		while (!isPssCode(*s)) ++s;
 		s = parseRegister(
@@ -417,7 +417,7 @@ const char *parseInstruction(const char *s, Parsed *p)
 	return s;
 }
 
-/* aligned */
+/* align */
 int8_t isAlign(const char *s)
 {
 	if (chkHead(s, "align"))
@@ -463,16 +463,25 @@ Parsed *parseSource(
 	size_t parsedCapacity = src->capacity;
 	size_t parsedCount = 0;
 
-	Parsed *parsed
-	= malloc(parsedCapacity * sizeof(Parsed));
+	Parsed *parsed = malloc(
+		parsedCapacity * sizeof(Parsed)
+	);
+
+	if (parsed == NULL) goto cleanup;
 
 	uint32_t scopeId = 0;
 	for (size_t i = 0; i < src->count; ++i) {
 		if (parsedCount + 32 >= parsedCapacity) {
 			parsedCapacity *= 2;
 
-			parsed
-			= realloc(parsed, parsedCapacity);
+			Parsed *new = realloc(
+				parsed,
+				parsedCapacity * sizeof(Parsed)
+			);
+
+			if (new == NULL) goto cleanup;
+
+			parsed = new;
 		}
 
 		const char *s = src->lines[i].content;
