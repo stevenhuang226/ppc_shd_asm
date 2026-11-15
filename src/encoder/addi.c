@@ -11,7 +11,7 @@ size_t enc_addi(const Register *regs)
 		return 0;
 	}
 
-	if (!imm16Check(regs[2].code)) {
+	if (!immi16Check(regs[2].code)) {
 		printf("addi: imm(16) check failed\n");
 		return 0;
 	}

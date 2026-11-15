@@ -11,7 +11,7 @@ size_t enc_ori(const Register *regs)
 		return 0;
 	}
 
-	if (regs[2].code < 0 || regs[2].code > 0xFFFF) {
+	if (!immu16Check(regs[2].code)) {
 		printf("ori: imm(u16) check failed\n");
 		return 0;
 	}

@@ -41,7 +41,7 @@ SourceArray *loadFiles(char **filenames, int size)
 
 			size_t len = strlen(s);
 
-			if (chunkPtr + len + 1 > sourceChunkSize) {
+			if (chunkPtr + len + 1 >= sourceChunkSize) {
 				sourceChunkSize *= 2;
 				sourceChunk = realloc(
 						sourceChunk,
