@@ -468,7 +468,7 @@ Parsed *parseSource(
 
 	uint32_t scopeId = 0;
 	for (size_t i = 0; i < src->count; ++i) {
-		if (parsedCount + 32 < parsedCapacity) {
+		if (parsedCount + 32 >= parsedCapacity) {
 			parsedCapacity *= 2;
 
 			parsed
