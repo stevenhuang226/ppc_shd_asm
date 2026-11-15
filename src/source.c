@@ -8,10 +8,11 @@ SourceArray *loadFiles(char **filenames, int size)
 	if (sourceChunk != NULL || sourceChunkSize != 0)
 		return NULL;
 
-	SourceArray *srcArr = malloc(
-			sizeof(SourceArray) +
-			SOURCE_ARR_DEF * sizeof(SourceLine)
-		);
+	SourceArray *srcArr
+	= malloc(
+		sizeof(SourceArray) +
+		SOURCE_ARR_DEF * sizeof(SourceLine)
+	);
 
 	srcArr->capacity = SOURCE_ARR_DEF;
 	srcArr->count = 0;
@@ -31,7 +32,8 @@ SourceArray *loadFiles(char **filenames, int size)
 		char buffer[1024];
 		int localLineCount = 0;
 
-		while (fgets(buffer, sizeof(buffer), file) != NULL) {
+		while (fgets(buffer, sizeof(buffer), file)
+		!= NULL) {
 			++localLineCount;
 
 			char *s = buffer;
@@ -43,30 +45,40 @@ SourceArray *loadFiles(char **filenames, int size)
 
 			if (chunkPtr + len + 1 >= sourceChunkSize) {
 				sourceChunkSize *= 2;
-				sourceChunk = realloc(
-						sourceChunk,
-						sourceChunkSize
-					);
+				sourceChunk
+				= realloc(
+					sourceChunk,
+					sourceChunkSize
+				);
 
-				if (sourceChunk == NULL) goto cleanup;
+				if (sourceChunk == NULL)
+					goto cleanup;
 			}
 
 			if (srcArr->count >= srcArr->capacity) {
 				srcArr->capacity *= 2;
-				srcArr = realloc(srcArr, srcArr->capacity);
+				srcArr
+				= realloc(
+					srcArr,
+					srcArr->capacity
+				);
 
-				if (srcArr == NULL) goto cleanup;
+				if (srcArr == NULL)
+					goto cleanup;
 			}
 
 			srcArr->lines[srcArr->count].filename = name;
-			srcArr->lines[srcArr->count].content =
-				sourceChunk + chunkPtr;
-			srcArr->lines[srcArr->count].lineNumber =
-				localLineCount;
+			srcArr->lines[srcArr->count].content
+			= sourceChunk + chunkPtr;
+			srcArr->lines[srcArr->count].lineNumber
+			= localLineCount;
 
-			chunkPtr += 1 + snprintf(sourceChunk + chunkPtr,
-			sourceChunkSize - chunkPtr,
-			"%s", s);
+			chunkPtr += 1
+			+ snprintf(
+				sourceChunk + chunkPtr,
+				sourceChunkSize - chunkPtr,
+				"%s", s
+			);
 
 			++srcArr->count;
 		}
@@ -81,8 +93,7 @@ SourceArray *loadFiles(char **filenames, int size)
 
 	return srcArr;
 cleanup:
-	free(srcArr);
-
+	free(srcArr); srcArr = NULL;
 	free(sourceChunk); sourceChunk = NULL;
 	sourceChunkSize = 0;
 

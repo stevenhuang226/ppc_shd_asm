@@ -3,14 +3,18 @@
 #include "../include/hash_label.h"
 
 HashStrMap *HashStrMapCreate(
-const size_t capacity,
-const uint32_t defVal,
-const int step) {
+	const size_t capacity,
+	const uint32_t defVal,
+	const int step
+) {
 	if (capacity == 0)
 		return NULL;
 
-	HashStrMap *map = malloc(sizeof(HashStrMap) +
-		capacity * sizeof(HashStrNode));
+	HashStrMap *map
+	= malloc(
+		sizeof(HashStrMap)
+		+ capacity * sizeof(HashStrNode)
+	);
 
 	map->step = step;
 	map->count = 0;
@@ -42,9 +46,10 @@ uint32_t hash32(const uint32_t src, const uint32_t lim)
 }
 
 void HashStrMapUpdate(
-HashStrMap *map,
-const char *key,
-const uint32_t val) {
+	HashStrMap *map,
+	const char *key,
+	const uint32_t val
+) {
 	if (key == NULL)
 		return;
 
@@ -58,15 +63,19 @@ const uint32_t val) {
 		h = hash32(h + map->step, map->capacity);
 	}
 
-	snprintf(map->data[h].string, sizeof(map->data[h].string),
-	"%s", key);
+	snprintf(
+		map->data[h].string,
+		sizeof(map->data[h].string),
+		"%s", key
+	);
 	map->data[h].val = val;
 	return;
 }
 
 uint32_t HashStrMapSearch(
-const HashStrMap *map,
-const char *key) {
+	const HashStrMap *map,
+	const char *key
+) {
 	if (key == NULL)
 		return map->defVal;
 
