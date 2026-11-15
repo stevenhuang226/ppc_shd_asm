@@ -5,7 +5,8 @@
 size_t enc_ori(const Register *regs)
 {
 	if (regs[0].type != REG_GPR
-	|| (regs[1].type != REG_GPR && regs[1].type != REG_NR)
+	|| (regs[1].type != REG_GPR
+		&& regs[1].type != REG_NR)
 	|| regs[2].type != REG_NR) {
 		printf("ori: register check failed\n");
 		return 0;
