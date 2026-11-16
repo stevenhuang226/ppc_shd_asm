@@ -18,7 +18,7 @@ int8_t checkChunk(const size_t append)
 	return 0;
 }
 
-int8_t immi16Check(const int64_t n)
+int8_t immi16Check(const int32_t n)
 {
 	if (n > INT16_MAX || n < INT16_MIN) {
 		return false;
@@ -27,9 +27,9 @@ int8_t immi16Check(const int64_t n)
 	return true;
 }
 
-int8_t immu16Check(const int64_t n)
+int8_t immu16Check(const int32_t n)
 {
-	if (n < 0 || n > INT16_MAX) {
+	if (n < 0 || n > UINT16_MAX) {
 		return false;
 	}
 	return true;
