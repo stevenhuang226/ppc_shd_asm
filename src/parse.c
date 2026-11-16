@@ -445,6 +445,14 @@ const char *parseInstruction(const char *s, Parsed *p)
 		if (s == NULL) break;
 	}
 
+	while (regc < INSTRUCTION_REGCS) {
+		p->instruction.registers[regc++]
+		= (Register) {
+			.type = REG_NR,
+			.code = 0
+		};
+	}
+
 	return s;
 }
 

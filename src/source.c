@@ -67,11 +67,12 @@ SourceArray *loadFiles(char **filenames, int size)
 					goto cleanup;
 			}
 
-			srcArr->lines[srcArr->count].filename = name;
-			srcArr->lines[srcArr->count].content
-			= sourceChunk + chunkPtr;
-			srcArr->lines[srcArr->count].lineNumber
-			= localLineCount;
+			srcArr->lines[srcArr->count]
+			= (SourceLine) {
+				.filename = name,
+				.content = sourceChunk + chunkPtr,
+				.lineNumber = localLineCount
+			};
 
 			chunkPtr += 1
 			+ snprintf(
