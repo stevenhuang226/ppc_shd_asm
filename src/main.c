@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 	size_t parsedSize = 0;
 
 	char *outputName = NULL;
+	HSMStack *hsm = NULL;
 
 	int inputNums = argc-3;
 	if (inputNums <= 0)
@@ -42,14 +43,14 @@ int main(int argc, char **argv)
 
 	// computeAddress(parsed, parsedSize);
 
-	HSMStack *hsm = malloc(sizeof(HSMStack) + 64 * sizeof(HashStrMap));
+	hsm = malloc(sizeof(HSMStack) + 64 * sizeof(HashStrMap));
 	hsm->capacity = 64;
 	hsm->top = -1;
 
 	outputChunk = malloc(1024);
 	outputChunkSize = 1024;
 
-	translateRegion(
+	int8_t tranRes = translateRegion(
 		srcArr,
 		parsed,
 		0,
@@ -57,7 +58,11 @@ int main(int argc, char **argv)
 		hsm
 	);
 
-	free(hsm);
+	if (tranRes < 0) {
+		goto cleanup;
+	}
+
+	free(hsm); hsm = NULL;
 
 	/* debug begin */
 	/*
@@ -111,5 +116,6 @@ cleanup:
 	}
 	free(parsed); parsed = NULL;
 	free(outputChunk); outputChunk = NULL;
+	free(hsm); hsm = NULL;
 	return err;
 }

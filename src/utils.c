@@ -53,9 +53,10 @@ int8_t chkHead(const char *s, const char *t)
 			return true;
 
 		if (*t == '%' && t[1] == 'd') {
-			if (!isdigit(*s))
+			if (!isdigit((uint8_t)*s))
 				return false;
-			while (!isPssEnd(*s) && isdigit(*s))
+			while (!isPssEnd(*s)
+			&& isdigit((uint8_t)*s))
 				++s;
 			t += 2;
 			continue;

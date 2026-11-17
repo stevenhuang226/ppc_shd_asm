@@ -346,6 +346,45 @@ const char *parseScope(
 }
 
 /*
+ * maximum(base) = 16;
+ * using hexValue to determine value;
+ */
+const char *parseImmBase(const char *s, const int32_t base, int32_t *retValue)
+{
+	int8_t negative = false;
+	if (*s == '-') {
+		negative = true; ++s;
+	}
+
+	int32_t res = 0;
+	int8_t h;
+	while ((h = hexValue(*s)) >= 0
+	&& h < base) {
+		res = res * base + h;
+		++s;
+	}
+
+	if (negative) *retValue = -res;
+	*retValue = res;
+
+	return s;
+}
+
+const char *parseImm(const char *s, int32_t *retValue)
+{
+	if (*s == 'x') {
+		return parseImmBase(++s, 16, retValue);
+	} else if (*s == 'b') {
+		return parseImmBase(++s, 2, retValue);
+	} else if (*s == 'o') {
+		return parseImmBase(++s, 8, retValue);
+	} else if (*s == 'd') {
+		return parseImmBase(++s, 10, retValue);
+	}
+	return parseImmBase(s, 10, retValue);
+}
+
+/*
  * instruction
  */
 const char *parseRegister(const char *s, Register *reg)
@@ -372,21 +411,13 @@ const char *parseRegister(const char *s, Register *reg)
 		reg->type = REG_V; s += 1;
 	}
 
-	int32_t code = 0;
-	int8_t negative = false;
-	if (*s == '-') {
-		negative = true; ++s;
+	if (reg->type != REG_NR) {
+		return parseImmBase(s, 10, &reg->code);
 	}
-	while (isdigit((uint8_t)*s)) {
-		code = code * 10 + *s - '0';
-		++s;
-	}
-	if (negative) code = -code;
-
-	reg->code = code;
-
-	return s;
+	
+	return parseImm(s, &reg->code);
 }
+
 
 const char *parseInstruction(const char *s, Parsed *p)
 {
@@ -398,12 +429,12 @@ const char *parseInstruction(const char *s, Parsed *p)
 	&& len+1 < INSTRUCTION_MAXLEN) {
 		p->instruction.cmd[len++] = *s++;
 	}
-	p->instruction.cmd[len++] = '\0';
+	p->instruction.cmd[len] = '\0';
 
-	if (len <= 1) return NULL;
+	if (len <= 0) return NULL;
 
 	size_t regc = 0;
-	while (!isPssEnd((uint8_t)*s)
+	while (!isPssEnd(*s)
 	&& regc < INSTRUCTION_REGCS) {
 		while (!isPssCode(*s)) ++s;
 		s = parseRegister(
@@ -414,10 +445,18 @@ const char *parseInstruction(const char *s, Parsed *p)
 		if (s == NULL) break;
 	}
 
+	while (regc < INSTRUCTION_REGCS) {
+		p->instruction.registers[regc++]
+		= (Register) {
+			.type = REG_NR,
+			.code = 0
+		};
+	}
+
 	return s;
 }
 
-/* aligned */
+/* align */
 int8_t isAlign(const char *s)
 {
 	if (chkHead(s, "align"))
@@ -463,16 +502,25 @@ Parsed *parseSource(
 	size_t parsedCapacity = src->capacity;
 	size_t parsedCount = 0;
 
-	Parsed *parsed
-	= malloc(parsedCapacity * sizeof(Parsed));
+	Parsed *parsed = malloc(
+		parsedCapacity * sizeof(Parsed)
+	);
+
+	if (parsed == NULL) goto cleanup;
 
 	uint32_t scopeId = 0;
 	for (size_t i = 0; i < src->count; ++i) {
-		if (parsedCount + 32 < parsedCapacity) {
+		if (parsedCount + 32 >= parsedCapacity) {
 			parsedCapacity *= 2;
 
-			parsed
-			= realloc(parsed, parsedCapacity);
+			Parsed *new = realloc(
+				parsed,
+				parsedCapacity * sizeof(Parsed)
+			);
+
+			if (new == NULL) goto cleanup;
+
+			parsed = new;
 		}
 
 		const char *s = src->lines[i].content;

@@ -92,8 +92,12 @@ int8_t translateRegion(
 	const size_t end,
 	HSMStack *hsm
 ) {
-	if (!src || !parsed || !hsm)
+	if (src == NULL
+	|| parsed == NULL
+	|| hsm == NULL
+	|| (begin >= end)) {
 		return -1;
+	}
 
 	if (hsm->top >= (int)hsm->capacity) return -1;
 
