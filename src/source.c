@@ -1,7 +1,8 @@
 #include "../include/global.h"
 #include "../include/setting.h"
-#include "../include/utils.h"
 #include "../include/source.h"
+#include "../include/utils.h"
+
 
 SourceArray *loadFiles(char **filenames, int size)
 {

@@ -1,9 +1,9 @@
 #ifndef LOOKUP_H
 #define LOOKUP_H
 
-#include "parse.h"
+#include "token.h"
 
-typedef size_t (*Encoder)(const Register *regs);
+typedef size_t (*Encoder)(const Slot *slots);
 
 typedef struct {
 	const char *name;

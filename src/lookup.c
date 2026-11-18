@@ -1,6 +1,7 @@
 #include "../include/global.h"
 
 #include "../include/lookup.h"
+
 #include "lookupTable.c"
 
 Encoder lookupEncoder(const char *name)

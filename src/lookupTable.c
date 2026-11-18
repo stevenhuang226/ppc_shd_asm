@@ -12,6 +12,7 @@
 #include "encoder/and.c"
 
 EncoderEntry encoders[] = {
+	/*
 	{"addi", enc_addi},
 	{"addis", enc_addis},
 	{"ori", enc_ori},
@@ -21,4 +22,5 @@ EncoderEntry encoders[] = {
 	{"or", enc_or},
 	{"xor", enc_xor},
 	{"and", enc_and}
+	*/
 };
