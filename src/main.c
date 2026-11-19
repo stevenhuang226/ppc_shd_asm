@@ -40,6 +40,32 @@ int main(int argc, char **argv)
 	SourceArray *srcArr = loadFiles(inputNames, inputNums);
 
 	token = parseToken(srcArr, &tokenSize);
+
+	/* debug begin */
+	for (int i = 0; i < tokenSize; ++i) {
+		printf("%s", srcArr->lines[token[i].srcId].content);
+		switch (token[i].type) {
+			case TKN_INSTRUCTION:
+				printf("instruction\n");
+				printf("cmd:%s\n", token[i].instruction.cmd);
+				break;
+			case TKN_LABEL:
+				printf("label\n");
+				printf("name:%s\n", token[i].label.name);
+				break;
+			case TKN_DATA:
+				printf("data\n");
+				printf("len:%u\n", token[i].data.size);
+				break;
+			case TKN_SCOPE_BEGIN:
+			case TKN_SCOPE_END:
+				printf("scope\n"); break;
+			case TKN_ALIGN:
+				printf("align\n"); break;
+		}
+	}
+	/* debug end */
+
 	goto cleanup;
 
 	// computeAddress(parsed, parsedSize);

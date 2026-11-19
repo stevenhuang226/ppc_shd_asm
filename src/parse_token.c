@@ -3,9 +3,6 @@
 #include "../include/global.h"
 #include "../include/utils.h"
 
-//#include "../include/lookup.v2.h"
-
-
 int8_t isUpdateLabel(const char *s)
 {
 	if (*s == UPDATE_LABEL_C)
@@ -18,16 +15,14 @@ const char *parseUpdateLabel(const char *s, Token *t)
 {
 	t->type = TKN_LABEL;
 
-	size_t len = 0;
-	while (!isPssEnd(*s)
-	&& isPssCode(*s)
-	&& len+1 < LABEL_MAXLEN) {
-		t->label.name[len++] = *s++;
-	}
-	t->label.name[len] = '\0';
+	size_t len = parsePssWord(
+		s,
+		t->label.name,
+		LABEL_MAXLEN
+	);
 	t->label.address = 0;
 
-	return s;
+	return s + len;
 }
 
 int8_t isData(const char *s)
@@ -218,9 +213,9 @@ const char *parseData(const char *s, Token *t)
 		return parseDataAuto(s+4, t);
 
 	int32_t immValue;
-	parseImm(s, 10, &immValue);
+	s = parseImm(s, 10, &immValue);
 
-	if (immValue <= 0) return NULL;
+	if (immValue <= 0 || s == NULL) return NULL;
 
 	size_t size = (size_t)immValue;
 
@@ -342,23 +337,23 @@ const char *parseSlot(const char *s, Slot *l)
 	}
 
 	l->type = SLOT_REG;
-	if (chkHead(s, "r")) {
+	if (chkHead_NE(s, "r%d%s")) {
 		l->reg.type = REG_GPR; s += 1;
-	} else if (chkHead(s, "f")) {
+	} else if (chkHead_NE(s, "f%d%s")) {
 		l->reg.type = REG_FPR; s += 1;
-	} else if (chkHead(s, "cr")) {
+	} else if (chkHead_NE(s, "cr%d%s")) {
 		l->reg.type = REG_CR; s += 2;
-	} else if (chkHead(s, "spr")) {
+	} else if (chkHead_NE(s, "spr%d%s")) {
 		l->reg.type = REG_SPR; s += 3;
-	} else if (chkHead(s, "msr")) {
+	} else if (chkHead_NE(s, "msr%s")) {
 		l->reg.type = REG_MSR; s += 3;
-	} else if (chkHead(s, "fpscr")) {
+	} else if (chkHead_NE(s, "fpscr%s")) {
 		l->reg.type = REG_FPSCR; s += 5;
-	} else if (chkHead(s, "tbu")) {
+	} else if (chkHead_NE(s, "tbu%d%s")) {
 		l->reg.type = REG_TBU; s += 3;
-	} else if (chkHead(s, "sr")) {
+	} else if (chkHead_NE(s, "sr%s")) {
 		l->reg.type = REG_SR; s += 2;
-	} else if (chkHead(s, "v")) {
+	} else if (chkHead_NE(s, "v%s")) {
 		l->reg.type = REG_V; s += 1;
 	} else {
 		l->type = SLOT_EXCEPTION;
@@ -370,7 +365,6 @@ const char *parseSlot(const char *s, Slot *l)
 			l->exception,
 			INSTRUCTION_SLOT_MAXLEN
 		);
-		printf("instruction slot: exception chars\n");
 		if (len == 0) return NULL;
 		return s + len;
 	}

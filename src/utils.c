@@ -26,20 +26,27 @@ int8_t isPssSpace(const char c)
 int8_t chkHead_NE(const char *s, const char *t)
 {
 	while (*s) {
-		if (*t == '\0')
-			return true;
-
 		if (t[0] == '%' && t[1] == 'd') {
-			if (!isdigit((uint8_t)*s))
+			if (!isdigit(*s))
 				return false;
 
 			while (*s
-			&& isdigit((uint8_t)*s)) {
-				++s;
-			}
+			&& isdigit(*s)) ++s;
 
 			t += 2;
 		}
+
+		if (t[0] == '%' && t[1] == 's') {
+			if (!isPssSpace(*s))
+				return false;
+			while (*s
+			&& isPssSpace(*s)) ++s;
+
+			t += 2;
+		}
+
+		if (*t == '\0')
+			return true;
 
 		if (*s != *t)
 			return false;
@@ -53,10 +60,7 @@ int8_t chkHead_NE(const char *s, const char *t)
 int8_t chkHead(const char *s, const char *t)
 {
 	while (!isPssEnd(*s) && isPssCode(*s)) {
-		if (*t == '\0')
-			return true;
-
-		if (*t == '%' && t[1] == 'd') {
+		if (t[0] == '%' && t[1] == 'd') {
 			if (!isdigit((uint8_t)*s))
 				return false;
 			while (!isPssEnd(*s)
@@ -65,6 +69,9 @@ int8_t chkHead(const char *s, const char *t)
 			t += 2;
 			continue;
 		}
+
+		if (*t == '\0')
+			return true;
 
 		if (*s != *t)
 			return false;
