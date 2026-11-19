@@ -48,6 +48,20 @@ int main(int argc, char **argv)
 			case TKN_INSTRUCTION:
 				printf("instruction\n");
 				printf("cmd:%s\n", token[i].instruction.cmd);
+				int c = 0;
+				while (token[i].instruction.slots[c].type != SLOT_EMPTY) {
+					switch (token[i].instruction.slots[c].type) {
+						case SLOT_LABEL:
+							printf("target label:%s\n", token[i].instruction.slots[c].label.name); break;
+						case SLOT_REG:
+							printf("register, code:%d\n", token[i].instruction.slots[c].reg.code); break;
+						case SLOT_IMM:
+							printf("imm:%d\n", token[i].instruction.slots[c].imm); break;
+						case SLOT_EXCEPTION:
+							printf("exception:%s\n", token[i].instruction.slots[c].exception); break;
+					}
+					++c;
+				}
 				break;
 			case TKN_LABEL:
 				printf("label\n");

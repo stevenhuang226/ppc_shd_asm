@@ -17,6 +17,12 @@ typedef struct HashStrMap {
 	HashStrNode data[];
 } HashStrMap;
 
+typedef struct HSMStack {
+	size_t capacity;
+	int top;
+	HashStrMap *stack[];
+} HSMStack;
+
 HashStrMap *HashStrMapCreate(
 	const size_t capacity,
 	const uint32_t defVal,
