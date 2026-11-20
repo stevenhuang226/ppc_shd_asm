@@ -462,9 +462,8 @@ Token *parseToken(
 		}
 
 		const char *s = src->lines[i].content;
-		int8_t failed = false;
 
-		for (;;) {
+		while (s) {
 			while (isPssSpace(*s)) ++s;
 			if (isPssEnd(*s)) break;
 
@@ -474,7 +473,7 @@ Token *parseToken(
 			s = parseStr(s, t, &scopeId);
 		}
 
-		if (failed) {
+		if (s == NULL) {
 			printf("Parse Token ERROR\n");
 			printf(
 				"file: %s, line: %d\n",
@@ -485,6 +484,8 @@ Token *parseToken(
 				"%s",
 				src->lines[i].content
 			);
+
+			goto cleanup;
 		}
 	}
 

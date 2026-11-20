@@ -1,4 +1,3 @@
-
 #include "../../include/global.h"
 
 int8_t isPssEnd(const char c)
@@ -21,10 +20,10 @@ int8_t isPssCode(const char c)
 
 int8_t isPssSpace(const char c)
 {
-	return !isPssCode(c);
+	return (!isPssCode(c));
 }
 
-int8_t checkHead_NE(const char *s, const char *t)
+int8_t chkHead_NE(const char *s, const char *t)
 {
 	while (*s) {
 		if (t[0] == '%'
@@ -53,7 +52,7 @@ int8_t checkHead_NE(const char *s, const char *t)
 		++s; ++t;
 	}
 
-	return (*t == '\0');
+	return *t == '\0';
 }
 
 int8_t chkHead(const char *s, const char *t)
@@ -70,7 +69,7 @@ int8_t chkHead(const char *s, const char *t)
 			t += 2;
 		}
 
-		if (*t != '\0') return true;
+		if (*t == '\0') return true;
 		if (*s != *t) return false;
 
 		++s; ++t;
