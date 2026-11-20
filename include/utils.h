@@ -17,7 +17,7 @@ size_t parsePssWord(
 	char *w,
 	size_t limit
 );
-void checkOutputChunk(size_t size);
+int8_t checkOutputChunk(size_t size);
 int8_t immi16Check(const int32_t n);
 int8_t immu16Check(const int32_t n);
 void writeU32BE(uint8_t *dst, uint32_t value);

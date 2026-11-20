@@ -1,15 +1,18 @@
 #include "../../include/global.h"
 
-void checkOutputChunk(size_t size)
+int8_t checkOutputChunk(size_t size)
 {
 	if (outputChunkPtr + size < outputChunkSize)
-		return;
+		return 0;
 
 	outputChunkSize *= 2;
-	outputChunk = realloc(
+	uint8_t *new = realloc(
 		outputChunk,
 		outputChunkSize
 	);
+
+	if (new == NULL) return -1;
+	else return 0;
 }
 
 int8_t immi16Check(const int32_t n)

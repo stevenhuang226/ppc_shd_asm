@@ -1,29 +1,27 @@
 #include "../../include/global.h"
-#include "../../include/parse.h"
-#include "../../include/encode.h"
+#include "../../include/token.h"
+#include "../../include/utils.h"
 
-/*
- * auth: ChatGPT
- */
-size_t enc_andi(const Register *regs)
+
+size_t enc_andi(const Slot *slots)
 {
-	if (regs[0].type != REG_GPR
-	|| regs[1].type != REG_GPR
-	|| regs[2].type != REG_NR) {
-		printf("andi.: register check failed\n");
+	if (slots[0].type != SLOT_REG
+	|| slots[0].reg.type != REG_GPR
+	|| slots[1].type != SLOT_REG
+	|| slots[1].reg.type != REG_GPR
+	|| slots[2].type != SLOT_IMM) {
+		printf("andi: slot type check failed\n");
 		return 0;
 	}
 
-	if (!immu16Check(regs[2].code)) {
+	if (!immu16Check(slots[2].imm)) {
 		printf("andi: imm(u16) check failed\n");
 		return 0;
 	}
 
-	if (checkChunk(4) < 0) return 0;
-
-	uint32_t ra = (uint32_t)regs[0].code;
-	uint32_t rs = (uint32_t)regs[1].code;
-	uint16_t ui = (uint16_t)regs[2].code;
+	uint32_t ra = (uint32_t)slots[0].reg.code;
+	uint32_t rs = (uint32_t)slots[1].reg.code;
+	uint16_t ui = (uint32_t)slots[2].imm;
 
 	uint32_t instruction
 	= (28u << 26)
@@ -31,12 +29,13 @@ size_t enc_andi(const Register *regs)
 	| (ra << 16)
 	| ui;
 
+	if (checkOutputChunk(4) < 0) return 0;
+
 	writeU32BE(
 		outputChunk + outputChunkPtr,
 		instruction
 	);
 	outputChunkPtr += 4;
 
-	return 4;
+	return 0;
 }
-

@@ -38,7 +38,7 @@ size_t enc_addi(const Slot *slots)
 	| (ra << 16)
 	| imm;
 
-	checkOutputChunk(4);
+	if (checkOutputChunk(4) < 0) return 0;
 
 	writeU32BE(
 		outputChunk + outputChunkPtr,

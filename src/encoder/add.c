@@ -10,14 +10,15 @@ size_t enc_add_base(const Slot *slots, int8_t _oe, int8_t _rc)
 	|| slots[1].reg.type != REG_GPR
 	|| slots[2].type != SLOT_REG
 	|| slots[2].reg.type != REG_GPR) {
-		printf("add: register check failed\n");
+		printf("add: slot check failed\n");
 		return 0;
 	}
 
 	uint32_t rt = (uint32_t)slots[0].reg.code;
 	uint32_t ra = (uint32_t)slots[1].reg.code;
 	uint32_t rb = (uint32_t)slots[2].reg.code;
-	uint32_t oe, rc;
+	uint32_t oe = 0;
+	uint32_t rc = 0;
 
 	if (_oe) oe = 1u;
 	if (_rc) rc = 1u;
@@ -31,7 +32,7 @@ size_t enc_add_base(const Slot *slots, int8_t _oe, int8_t _rc)
 	| (266u << 9)
 	| rc;
 
-	checkOutputChunk(4);
+	if (checkOutputChunk(4) < 0) return 0;
 
 	writeU32BE(
 		outputChunk + outputChunkPtr,
@@ -41,3 +42,13 @@ size_t enc_add_base(const Slot *slots, int8_t _oe, int8_t _rc)
 
 	return 4;
 }
+
+size_t enc_add(const Slot *slots)
+{
+	return enc_add_base(slots, false, false);
+}
+
+/*
+ * TODO:
+ * extend more similar instruction
+ */
