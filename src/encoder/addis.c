@@ -1,38 +1,37 @@
 #include "../../include/global.h"
-#include "../../include/parse.h"
-#include "../../include/encode.h"
+#include "../../include/token.h"
+#include "../../include/utils.h"
 
-size_t enc_addis(const Register *regs)
+size_t enc_addis(const Slot *slots)
 {
-	if (regs[0].type != REG_GPR
-	|| (regs[1].type != REG_NR && regs[1].type != REG_GPR)
-	|| regs[2].type != REG_NR) {
-		printf("addis: register check failed\n");
+	if (slots[0].type != SLOT_REG
+	|| (slots[1].type != SLOT_REG && slots[1].type != SLOT_IMM)
+	|| slots[2].type != SLOT_IMM) {
+		printf("addis: slot type check failed\n");
 		return 0;
 	}
 
-	if (!immi16Check(regs[2].code)) {
-		printf("addis: imm(16) check failed\n");
-		return 0;
+	if (!immi16Check(slots[2].imm)) {
+		printf("addis: imm(i16) check failed\n");
 	}
 
-	if (checkChunk(4) < 0) return 0;
-
-	uint32_t ra = regs[0].code;
-	uint32_t rt = regs[1].code;
-	uint16_t imm = (uint16_t)regs[2].code;
+	uint32_t rt = slots[0].reg.code;
+	uint32_t ra = slots[1].reg.code;
+	uint16_t imm = (uint16_t)slots[2].imm;
 
 	uint32_t instruction
 	= (15u << 26)
-	| (ra << 21)
-	| (rt << 16)
+	| (rt << 21)
+	| (ra << 16)
 	| imm;
+
+	checkOutputChunk(4);
 
 	writeU32BE(
 		outputChunk + outputChunkPtr,
 		instruction
 	);
-	outputChunkPtr += 4;
+	outputChunk += 4;
 
 	return 4;
 }
